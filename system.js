@@ -532,7 +532,7 @@ var gainTokens = function(amount){
 
 		var totalMagnitude = getItemBonus("tokenBoost");
 		amount *= totalMagnitude;
-
+		dropTokenParticle(amount);
 		progressQuest('gainTokens', "none" , amount);
 		player.dungeonTokens += amount
 		if(amount == 1){
