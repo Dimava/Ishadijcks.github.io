@@ -552,7 +552,7 @@ var gainMoney = function(money, message){
 			money *= getOakItemBonus("Amulet Coin")
 		}
 		money = Math.floor(money);
-
+		dropMoneyParticle(money);
 		progressQuest('gainMoney', "none" , money);
 		player.money += money
 		log(message + money + "!");
@@ -634,24 +634,21 @@ var enemyDefeated = function(){
 				gainRandomItem(player.route);
 		}
 
+		var catchRate = curEnemy.catchRate + getBonusCatchrate() - 10;
+		
+		setTimeout(function() {
 
-
-
-		setTimeout(function(){
-
-			if(alreadyCaughtShiny(curEnemy.name)){
-				$("#enemyInfo").html("<br>"+curEnemy.name+" <img id=alreadyCaughtImage src=images/shinyPokeball.PNG><br><img id=pokeball src=images/Pokeball.PNG>");
-            } else if(alreadyCaught(curEnemy.name)){
-				$("#enemyInfo").html("<br>"+curEnemy.name+" <img id=alreadyCaughtImage src=images/Pokeball.PNG><br><img id=pokeball src=images/Pokeball.PNG>");
-			}
-			else{
-			$("#enemyInfo").html("<br>"+curEnemy.name+" <br><img id=pokeball src=images/Pokeball.PNG>");
-			}
+		if (alreadyCaughtShiny(curEnemy.name)) {
+			$("#enemyInfo").html("<br>" + curEnemy.name + " <img id=alreadyCaughtImage src=images/shinyPokeball.PNG><br><div id=pokeballContainer><img id=pokeball src=images/shinyPokeball.PNG></div>");
+		} else if (alreadyCaught(curEnemy.name)) {
+			$("#enemyInfo").html("<br>" + curEnemy.name + " <img id=alreadyCaughtImage src=images/Pokeball.PNG><br><div id=pokeballContainer><img id=pokeball src=images/Pokeball.PNG></div>");
+		} else {
+			$("#enemyInfo").html("<br>" + curEnemy.name + " <span id=alreadyCaughtImage></span><br><div id=pokeballContainer><img id=pokeball src=images/Pokeball.PNG></div>");
+		}
+			$("#catchDisplay").html("Catch chance: " + Math.min(100, catchRate) + "%");
 			player.pokeballs--;
+			afterShowBall();
 		}, 1);
-
-		var catchRate = curEnemy.catchRate + getBonusCatchrate() -10;
-		$("#catchDisplay").html("Catch chance: "+Math.min(100,catchRate) + "%");
 
 		setTimeout(function(){
 		if(canCatch){
@@ -659,8 +656,8 @@ var enemyDefeated = function(){
 			if(chance<=catchRate){
 				capturePokemon(curEnemy.name, curEnemy.shiny);
 				progressQuest('capturePokemonRoute', player.route , 1);
-
-			}
+				afterCatch(1);
+			} else afterCatch(0)
 
 			if( inProgress == 1){
 				generatePokemon(player.route);
@@ -918,3 +915,6 @@ var numberWithCommas = function(x){
 var numberNoCommas = function(x){
 	return parseFloat(String(x).replace(/,/g, ''));
 }
+
+
+
