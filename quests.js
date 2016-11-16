@@ -21,7 +21,7 @@ function isLocationAccessible(name) {
 
 
 var questList = [];
-var addQuest = function(type, description, difficulty, minAmount, randomAmount, rewardMultiplier, baseReward, hardness, type2) {
+var addQuest = function(type, description, difficulty, minAmount, randomAmount, rewardMultiplier, baseReward, hardness, type2, type3) {
 	var tempQuest = {
 		type: type,
 		description: description,
@@ -30,14 +30,15 @@ var addQuest = function(type, description, difficulty, minAmount, randomAmount, 
 		randomAmount: randomAmount,
 		baseReward: (baseReward || 1) * (rewardMultiplier || 1),
 		hardness: hardness || 0,
-		type2: type2 || "none"
+		type2: type2 || "none",
+		type3: type3 || "none"
 	};
 	questList.push(tempQuest);
 }
 var addQuests = function(type, description, quests) {
 	for (var i = 0; i < quests.length; i++) {
 		var q = quests[i];
-		addQuest(type, description, q[0], q[1], q[2], q[3], q[4], q[5], q[6]);
+		addQuest(type, description, q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]);
 	}
 };
 var addQuestMultiplate = function(type, difficulty, list, base, quests, fn) {
@@ -67,7 +68,8 @@ var useQuestMultiplate = function(plate, curQuest) {
 		randomAmount: 0,
 		baseReward: 1,
 		hardness: 0,
-		type2: "none"
+		type2: "none",
+		type3: "none"
 	};
 	var list = plate.list;
 	var quest = plate.quests[Math.floor(plate.quests.length * Math.random())];
@@ -94,6 +96,7 @@ var startQuest = function(quest, forsed) {
 	curQuest.progress = 0;
 	curQuest.notified = 0;
 	curQuest.location = '';
+	curQuest.type2=curQuest.type3="none"
 	if (quest.isMultiplate) {
 		curQuest.multiplate = quest;
 		curQuest.template = quest = useQuestMultiplate(quest, curQuest);
@@ -171,14 +174,15 @@ var startQuest = function(quest, forsed) {
 
 
 
-var progressQuest = function(type, type2, amount) {
+var progressQuest = function(type, type2, amount, type3="none") {
 	// if (window.logp)
 	// 	console.log('progressQuest(' + Array.from(arguments).join(',') + ')')
 		// console.log(type);
 		// console.log(type2);
 		// console.log(player.curQuest);
 	if (type === player.curQuest.type) {
-		if (type2 === player.curQuest.type2 || type2 === "none" || player.curQuest.type2 === "none") {
+		if (type2 === player.curQuest.type2 || type2 === "none" || player.curQuest.type2 === "none")
+		if (type3 === player.curQuest.type2 || type3 === "none" || player.curQuest.type3 === "none") {
 			player.curQuest.progress += amount;
 			showCurQuest();
 			if (player.curQuest.progress >= player.curQuest.amount && !player.curQuest.notified) {
