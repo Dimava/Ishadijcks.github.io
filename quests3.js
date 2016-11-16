@@ -21,7 +21,7 @@ function isLocationAccessible(name) {
 
 
 var questList = [];
-var createQuest =  function(type, description, difficulty, minAmount, randomAmount, rewardMultiplier, baseReward, hardness, type2, reqData, onclear) {
+var createQuest =  function(type, description, difficulty, minAmount, randomAmount, rewardMultiplier, baseReward, hardness, type2, onclear, filter) {
 	var tempQuest = {
 		type: type,
 		description: description,
@@ -31,11 +31,12 @@ var createQuest =  function(type, description, difficulty, minAmount, randomAmou
 		baseReward: (baseReward || 1) * (rewardMultiplier || 1),
 		hardness: hardness || 0,
 		type2: type2 || "none",
-		reqData: reqData || []
+		onclear: onclear,
+		filter: filter
 	};
 	return tempQuest;
 }
-var addQuest = function(type, description, difficulty, minAmount, randomAmount, rewardMultiplier, baseReward, hardness, type2, reqData, onclear) { // arguments names here are optional
+var addQuest = function() {
 	questList.push(createQuest.apply(this,arguments));
 };
 var addQuests = function(type, description, quests) {
@@ -44,7 +45,7 @@ var addQuests = function(type, description, quests) {
 		addQuest.apply(this, quests[i]);
 	}
 };
-var createQuestMultiplate = function(type, difficulty, list, base, quests, fn) { // may be used for story quests
+var createQuestMultiplate = function(type, difficulty, list, base, quests, fn) {
 	var tempQuest = {
 		isMultiplate: true,
 		type: type,
@@ -56,7 +57,7 @@ var createQuestMultiplate = function(type, difficulty, list, base, quests, fn) {
 	};
 	return tempQuest;
 };
-var addQuestMultiplate = function(type, difficulty, list, base, quests, fn) { // arguments names here are optional
+var addQuestMultiplate = function() {
 	questList.push(createQuestMultiplate(this,arguments));
 };
 var addQuestMultiplates = function(type, list, base, plates, fn) {
@@ -75,8 +76,8 @@ var useQuestMultiplate = function(plate, curQuest) {
 		baseReward: 1,
 		hardness: 0,
 		type2: "none",
-		reqData: [],
-		onclear: null
+		onclear: null,
+		filter: null
 	};
 	var list = plate.list;
 	var quest = plate.quests[Math.floor(plate.quests.length * Math.random())];
@@ -104,7 +105,6 @@ var startQuest = function(quest, forsed) {
 	curQuest.notified = 0;
 	curQuest.location = '';
 	curQuest.type2 = "none";
-	curQuest.reqData = [];
 	if (quest.isMultiplate) {
 		curQuest.multiplate = quest;
 		curQuest.template = quest = useQuestMultiplate(quest, curQuest);
@@ -115,14 +115,8 @@ var startQuest = function(quest, forsed) {
 		curQuest.difficulty = quest.difficulty;
 		curQuest.hardness = quest.hardness;
 		curQuest.type2 = quest.type2;
-		curQuest.reqData = quest.reqData;
 	}
 	curQuest.amount = Math.ceil(quest.minAmount + Math.random() * quest.randomAmount * (1 + player.questDifficulty)); // some math
-
-	if (typeof quest.type2 == "object")
-		curQuest.type2 = quest.type2[Math.floor(quest.type2.length * Math.random())];
-	else
-		curQuest.type2 = quest.type2;
 
 	switch (quest.type) {
 		case "defeatPokemonRoute":
@@ -184,15 +178,13 @@ var startQuest = function(quest, forsed) {
 
 
 
-var progressQuest = function(type, type2, amount, type3="none") {
-	// if (window.logp)
-	// 	console.log('progressQuest(' + Array.from(arguments).join(',') + ')')
-		// console.log(type);
-		// console.log(type2);
-		// console.log(player.curQuest);
+var progressQuest = function(type, type2, amount) {
+	if (window.logp)
+		console.log('progressQuest(' + Array.from(arguments).join(',') + ')')
+	if(type!=player.quest.type) return;
+	if()
 	if (type === player.curQuest.type) {
-		if (type2 === player.curQuest.type2 || type2 === "none" || player.curQuest.type2 === "none")
-		if (type3 === player.curQuest.type2 || type3 === "none" || player.curQuest.type3 === "none" || /*fallback*/ !player.curQuest.type3) {
+		if (type2 === player.curQuest.type2 || type2 === "none" || player.curQuest.type2 === "none"){
 			player.curQuest.progress += amount;
 			showCurQuest();
 			if (player.curQuest.progress >= player.curQuest.amount && !player.curQuest.notified) {
