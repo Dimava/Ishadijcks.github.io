@@ -364,6 +364,7 @@ var gainShards = function(type, amount){
 		}
 		player.typeShards[typeToNumber(type[typeNum])] += amount;
 		progressQuest('gainShards', "none" , amount);
+		recoverResetShards(type[typeNum],amount);
 	}
 }
 

@@ -51,7 +51,8 @@ var dungeonNameList = [];
 var getDungeonNames = function(){
     dungeonNameList = [];
     for( var i = 16; i<townList.length; i++){
-        dungeonNameList.push(townList[i].gym.name);
+        if(townList[i].gym)
+            dungeonNameList.push(townList[i].gym.name);
     }
     return dungeonNameList;
  }

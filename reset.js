@@ -1,11 +1,15 @@
 var softReset = function() {
-	canSave = 0;
-	save=()=>{};
+	canSave = 1;
+	save = function() {
+		if (!canSave) return;
+		canSave = 0;
+		alert('Saving is disabled!') };
 	oldPlayer = player;
 	moveToRoute(1);
 	// copied from system.js
 	player = {
 		oldPlayer: oldPlayer,
+		resetted: true,
 		clickAttack: 1,
 		clickMultiplier: 1,
 		attack: 0,
@@ -123,7 +127,7 @@ var softReset = function() {
 	}, 1000);
 
 
-// function calculate
+	// function calculate
 
 
 
@@ -131,12 +135,21 @@ var softReset = function() {
 }
 
 afterReset = function() {
-	var interval = setInterval(function(){
-		if(player.caughtPokemonList.length){
+	var interval = setInterval(function() {
+		if (player.caughtPokemonList.length) {
 			clearInterval(interval);
 			player.starter = player.oldPlayer.starter;
 		}
-	},100);
+	}, 100);
+	sellPurchasedItems();
+	calculateResetBlessing();
+	recalculateResetBlessings();
+	showEggs();
+	resetUpgrades();
+	logCount = 0;
+	$("#console").html("");
+	log('You was transfered to anotrer world.');
+	log('You feel lighter... Probably, it\'s that "Time Blessing" thing.');
 }
 
 
@@ -175,30 +188,31 @@ showBill = function() {
 		}
 	});
 	s += '</table></div>';
-	if(!b){
-		s='<button class="btn btn-primary" style="width: 200px;margin-left: calc(50% - 340px);" id="billProceed" onclick="showBillConfirm();">Proceed</button></div>';
+	if (!b) {
+		s = '<button class="btn btn-primary" style="width: 200px;margin-left: calc(50% - 340px);" id="billProceed" onclick="showBillConfirm();">Proceed</button></div>';
 	}
-	html+=s;
+	html += s;
 	// console.log(html)
 	$('#oakBody').html(html);
 	$('#oakModal .modal-header h4').html('Bill');
 	$('#oakModal').modal('show');
+	debug.getShards();
 }
 
-showBillConfirm = function(){
+showBillConfirm = function() {
 	$('#billProceed').html('Sure?').addClass('btn-danger').removeClass('btn-primary').removeAttr('onclick').click(resetAnimation);
 }
 
-resetAnimation = function(){
+resetAnimation = function() {
 	$('#oakModal').modal('hide');
 	$('<div id=resetFade />').appendTo('body')
-	setTimeout(function(){
+	setTimeout(function() {
 		$('body').addClass('shake');
-	},1000);
-	setTimeout(softReset,6000);
-	setTimeout(function(){
+	}, 1000);
+	setTimeout(softReset, 6000);
+	setTimeout(function() {
 		$('body').removeClass('shake');
-	},11000);
+	}, 11000);
 }
 $('<style>').appendTo('head').html(`
 body.shake{
@@ -249,3 +263,124 @@ debug = {
 		return "Got 100 shards of each type exept dark";
 	}
 };
+
+recoverResetShards = function(type, amount) {
+	amount = useResetBlessing(type, amount);
+	if (!amount) return;
+	log('The Time Blessing has granted you access to ' + amount + ' shards!');
+	player.typeShards[typeToNumber(type)] += amount;
+}
+recoverResetMoney = function(money, message) {
+	money = useResetBlessing('money', money);
+	if (!money) return;
+	log('With the help of the Time Blessing you have recovered $' + money + '!');
+	player.money += money;
+	player.totalMoney += money;
+}
+recoverResetTokens = function(amount) {
+	amount = useResetBlessing('dungeonTokens', amount);
+	if (!amount) return;
+	log('With the help of the Time Blessing you have recovered ' + amount + ' dungeon token' + (amount == 1 ? '' : 's') + '!');
+	player.dungeonTokens += amount;
+	player.totalDungeonTokens += amount;
+}
+recoverResetQP = function(amount) {
+	amount = useResetBlessing('questPoints', amount);
+	if (!amount) return;
+	log('The Time Blessing has granted you access to ' + amount + ' Quest points!');
+	player.questPoints += amount;
+}
+recoverResetShiny = function(egg) {
+	var p = player.oldPlayer.caughtPokemonList.filter(function(p) {
+		return p.name == egg.pokemon;
+	})[0];
+	p2 = player.caughtPokemonList.filter(function(p) {
+		return p.name == egg.pokemon;
+	})[0];
+	if (p && p.shiny && !(p2 && p2.shiny) && !p.shinyInReset) {
+		log('Time Blessing is flowing around the egg, making it shiny!');
+		return 1;
+	}
+	return 0;
+}
+sellPurchasedItems = function() {
+	// hatch eggs #undone
+	['not', 'normal', 'very'].forEach(function(s) {
+		s = player.oldPlayer[s + 'EffectiveTypeBonus'];
+		s.forEach(function(e, i) {
+			player.oldPlayer.typeShards[i] += 250 * e * e;
+			s[i] = 0;
+		});
+	});
+	var a = [0, 500, 1500, 3000]
+	player.oldPlayer.questPoints += a[player.oldPlayer.eggSlots];
+	player.oldPlayer.eggSlots = 0;
+	a = [2000, 750, 5000, 2500, 500];
+	["Eevee", "Porygon", "Jynx", "Mr. Mime", "Lickitung"].forEach(function(s, i) {
+		var p = player.oldPlayer.caughtPokemonList.filter(function(p) {
+			return p.name == s
+		})[0];
+		if (p && !p.soldInReset && !p.shiny) {
+			p.soldInReset = 1;
+			player.oldPlayer.questPoints += a[i];
+		}
+	});
+	// sell evos for shards #undone
+	// sell egged for QP #undone
+}
+recalculateResetBlessings = function() {
+	var b = {
+		money: calculateResetBlessing(player.oldPlayer.money, 1e7),
+		dungeonTokens: calculateResetBlessing(player.oldPlayer.dungeonTokens, 1e6),
+		questPoints: calculateResetBlessing(player.oldPlayer.questPoints, 1e3)
+	};
+	player.oldPlayer.money = 0;
+	player.oldPlayer.dungeonTokens = 0;
+	player.oldPlayer.questPoints = 0;
+	numberToType.forEach(function(e, i) {
+		b[e] = calculateResetBlessing(player.oldPlayer.typeShards[i]);
+		player.oldPlayer.typeShards[i] = 0;
+	});
+	// put items too #undone
+	player.resetBlessing = b;
+}
+calculateResetBlessing = function(amount, base) {
+	if (!amount) return -1;
+	var b = {
+		level: 1,
+		multi: 1.1,
+		amount: 0,
+		base: base
+	}
+	var m = 1;
+	while (amount > m * base) {
+		amount -= m * base;
+		m += 0.1;
+		b.level++;
+	}
+	b.amount = amount;
+	return b;
+}
+useResetBlessing = function(type, amount) {
+	if (!player.resetBlessing) return;
+	var b = player.resetBlessing[type];
+	if (!b || !b.level) return;
+	var m = b.multi - Math.random() / 5;
+	var a = Math.ceil(amount * m);
+	if (a < b.amount) {
+		b.amount -= a;
+		return a;
+	}
+	if (b.level == 1) {
+		amount = b.amount;
+		delete player.resetBlessing[type];
+		return amount;
+	}
+	b.amount += b.base;
+	b.multi -= 0.1;
+	b.level--;
+	return useResetBlessing(type, amount);
+}
+
+
+//https://jsfiddle.net/j1a9xnL5/4/ - badges #undone
