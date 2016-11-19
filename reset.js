@@ -3,7 +3,8 @@ var softReset = function() {
 	save = function() {
 		if (!canSave) return;
 		canSave = 0;
-		alert('Saving is disabled!') };
+		alert('Saving is disabled!')
+	};
 	oldPlayer = player;
 	moveToRoute(1);
 	// copied from system.js
@@ -267,7 +268,7 @@ debug = {
 recoverResetShards = function(type, amount) {
 	amount = useResetBlessing(type, amount);
 	if (!amount) return;
-	log('The Time Blessing has granted you access to ' + amount + ' shards!');
+	log('The Time Blessing has granted you access to ' + amount + type.charAt(0).toUpperCase() + type.substr(1).toLowerCase() + ' shards!');
 	player.typeShards[typeToNumber(type)] += amount;
 }
 recoverResetMoney = function(money, message) {
@@ -338,7 +339,7 @@ recalculateResetBlessings = function() {
 	player.oldPlayer.dungeonTokens = 0;
 	player.oldPlayer.questPoints = 0;
 	numberToType.forEach(function(e, i) {
-		b[e] = calculateResetBlessing(player.oldPlayer.typeShards[i]);
+		b[e] = calculateResetBlessing(player.oldPlayer.typeShards[i], 1e3);
 		player.oldPlayer.typeShards[i] = 0;
 	});
 	// put items too #undone
