@@ -147,6 +147,8 @@ afterReset = function() {
 	recalculateResetBlessings();
 	showEggs();
 	resetUpgrades();
+	initVueCaughtList();
+	initVueItemList();
 	logCount = 0;
 	$("#console").html("");
 	log('You was transfered to anotrer world.');
