@@ -138,6 +138,9 @@ $(document).ready(function(){
 	setInterval(itemInterval, 1000);
 	itemInterval();
 
+	initVueCaughtList();
+	initVueItemList();
+
 	if(player.starter != "none"){
 	updateAll();
 	}

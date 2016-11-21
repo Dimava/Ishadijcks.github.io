@@ -8,6 +8,7 @@
 	<script src="jquery.js"></script>
 	<script type="text/javascript" src="tooltipster/dist/js/tooltipster.bundle.min.js"></script>
 	<link href="tooltipster/dist/css/tooltipster.bundle.min.css" rel="stylesheet" type="text/css">
+	<script src="vue.js"></script>
 	<script src="pokemonList.js"></script>
 	<script src="dungeons.js"></script>
 	<script src="system.js"></script>
@@ -85,9 +86,13 @@
 								</tr>
 							</thead>
 							<tbody id="pokemonBody">
-								<tr>
-									<th>It appears your javascript isn't loading properly</th>
-									<th></th>
+								<tr v-for="pokemon in pokemonList">
+									<th>
+										<img v-if="pokemon.shiny" class="smallShinyImage" :src="'images/shinypokemon/'+pokemon.id+'.png'">
+										<img v-else class="smallImage" :src="'images/pokemon/'+pokemon.id+'.png'"> {{pokemon.name}}
+									</th>
+									<th>{{pokemon.attackValue}}</th>
+									<th>{{pokemon.level}}</th>
 								</tr>
 							</tbody>
 						</table>
@@ -1721,10 +1726,17 @@
 								</tr>
 							<thead>
 							<tbody id="itemBody">
-								<tr>
-									<th>It appears your javascript isn't loading properly</th>
-									<th></th>
+								<tr v-for="item in items">
+									<th>
+										<img :title="item.flavorText" :class="'smallImage tooltipItem'" :src="'images/items/'+item.id+'.png'">
+										{{item.name}}
+										<div class='noselect useItemButton' :id="'item'+item.id">Use</div>
+									</th>
+									<th>{{item.quantity}}</th>
+									<th v-if="item.timeLeft">{{item.timeLeft+'s'}}</th>
+									<th v-else="item.timeLeft">{{item.use=="evolution"||item.use=="breeding"?'':'0s'}}</th>
 								</tr>
+								<tr v-if="items.length == 0"><th colspan="3" align="center">You have no items</th></tr>
 							</tbody>
 
 						</table>
