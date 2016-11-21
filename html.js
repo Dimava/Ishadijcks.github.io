@@ -17,6 +17,8 @@ var log = function(text){
 
 		// HTML functions
 
+var vues = {};
+
 // Update the upgradeBox
 
 var updateUpgrades = function(){
@@ -45,13 +47,19 @@ var updateUpgrades = function(){
 
 
 var initVueCaughtList = function() {
-	new Vue({
-		el: '#pokemonBody',
-		data: {
-			pokemonList: player.caughtPokemonList
-		}
-	})
+	if (vues.caughtList) {
+		vues.caughtList.pokemonList = player.caughtPokemonList;
+	} else {
+		vues.caughtList = new Vue({
+			el: '#pokemonBody',
+			data: {
+				pokemonList: player.caughtPokemonList
+			}
+		});
+	}
 }
+
+
 		
 // Update the list of caught pokemon
 var updateCaughtList = function(){
@@ -60,93 +68,31 @@ var updateCaughtList = function(){
 		p.level = experienceToLevel(p.experience,p.levelType)
 		p.attackValue = Math.ceil(p.level*p.attack/100);
 	}
-	// var pokemonHtml = ""
-	// var pokemonHeight = $("#pokemonBody").height()
-	// if( pokemonHeight > 1000){
-	// 	$("#pokemons").height(1000);
-	// }
-	// else {
-	// 	$("#pokemons").height(pokemonHeight + 120);
-	// }
-
-	// var pokemonHeight = $("#pokemonBody").height()
-
-	// if( pokemonHeight > 1000){
-	// 	$("#pokemons").height(1000);
-	// }
-	// else {
-	// 	$("#pokemons").height(pokemonHeight + 120);
-	// }
-	// for (var i = 0; i<player.caughtPokemonList.length; i++){
-	// 	pokemonHtml += "<tr>";
-	// 	if(isShiny(player.caughtPokemonList[i].name)){
-	// 		pokemonHtml += "<th><img class=smallShinyImage src=images/shinypokemon/"+player.caughtPokemonList[i].id+".png>"+player.caughtPokemonList[i].name + "</th>";
-	// 	} else {
-	// 		pokemonHtml += "<th><img class=smallImage src=images/pokemon/"+player.caughtPokemonList[i].id+".png>"+player.caughtPokemonList[i].name + "</th>";
-	// 	}
-	// 	pokemonHtml += "<th>" + Math.ceil(experienceToLevel(player.caughtPokemonList[i].experience,player.caughtPokemonList[i].levelType)*(player.caughtPokemonList[i].attack)/100) +"</th>";
-	// 	pokemonHtml += "<th>" + experienceToLevel(player.caughtPokemonList[i].experience,player.caughtPokemonList[i].levelType) + "</th>";
-	// 	pokemonHtml += "</tr>";
-	// }
-	// $("#pokemonBody").html(pokemonHtml);
-	// $("#caughtPokemon").html("<br>Name<br>");
-	// $("#AttackCaughtPokemon").html("<br>Attack <br><br>");
-	// $("#LevelCaughtPokemon").html("<br>Level <br><br>");
-	// if( player.caughtPokemonList.length == 0){
-	// 	$("#caughtPokemon").append("None");
-	// 	$("#AttackCaughtPokemon").append("<br>");
-	// 	$("#LevelCaughtPokemon").append("<br>");
-	// }
 }
 
-var initVueItemList = function(){
-	new Vue({
-		el: '#itemBody',
-		data: {
-			items: player.inventoryList
-		}
-	});
-	setTimeout(function(){
-		$(".tooltipItem").tooltipster({
-			position: "left"
+var initVueItemList = function() {
+	if (vues.itemList) {
+		vues.itemList.items = player.inventoryList;
+	} else {
+		vues.itemList = new Vue({
+			el: '#itemBody',
+			data: {
+				items: player.inventoryList
+			}
 		});
-	},1000);
-}
-
-var updateItems = function(){
-
-	// var itemHtml = ""
-
-	// for (var i = 0; i<player.inventoryList.length; i++){
-	// 	itemHtml += "<tr>";
-	// 	if(player.inventoryList.length == 0 || isInventoryEmpty()==true){
-	// 		itemHtml += "<th>You have no items</th>";
-	// 		itemHtml += "<th></th>";
-	// 	}
-	// 	if(player.inventoryList[i] != undefined){
-	// 		if(player.inventoryList[i].quantity > 0 || player.inventoryList[i].timeLeft > 0){
-	// 			itemHtml += "<th><img title='"+player.inventoryList[i].flavorText+"' class='smallImage tooltipItem' src=images/items/"+player.inventoryList[i].id+".png>"+player.inventoryList[i].name + "<div class='noselect useItemButton' id='item"+player.inventoryList[i].id+"' >Use </div>	</th>";
-	// 			itemHtml += "<th>"+player.inventoryList[i].quantity+"</th>";
-	// 			if(player.inventoryList[i].timeLeft == undefined){
-	// 				itemHtml += "<th>0s</th>"
-	// 			} else {
-	// 				itemHtml += "<th>"+player.inventoryList[i].timeLeft+"s</th>"
-	// 			}
-	// 		}
-	// 	}
-	// 	itemHtml += "</tr>";
-
-
-	// }
-
-
-
-	// $("#itemBody").html(itemHtml);
-
+	}
+	setTimeout(function() {
 		$(".tooltipItem:not(.tooltipstered)").tooltipster({
 			position: "left"
-	});
+		});
+	}, 1000);
+}
 
+
+var updateItems = function(){
+	$(".tooltipItem:not(.tooltipstered)").tooltipster({
+		position: "left"
+	});
 }
 
 // Update the stats
