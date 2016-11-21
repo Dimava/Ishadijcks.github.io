@@ -282,5 +282,8 @@ var generateEggShiny = function(egg){
 		console.log("Shiny!!!");
 		return 1;
 	}
+	if(recoverResetShiny(egg)){
+		return 1;
+	}
 	return 0;
 };

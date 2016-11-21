@@ -568,6 +568,7 @@ var gainTokens = function(amount){
 		} else {
 			log("You gained " + amount + " dungeon tokens!");
 		}
+		recoverResetTokens(amount);
 	}
 }
 
@@ -585,6 +586,7 @@ var gainMoney = function(money, message){
 		player.money += money
 		player.totalMoney += money;
 		log(message + money + "!");
+		recoverResetMoney(money, message);
 	}
 }
 

@@ -66,6 +66,9 @@ var showTown = function(town){
 			html += "<button onClick='oakExplainAgain()' class='tutorial leftTownButton btn btn-primary col-sm-2' id='"+town.name+" mom'>Oak</button>";
 			html += "</div><div class='row'>";
 		}
+	} else if (town.shop === "reset"){
+		html += "<button onClick='showBill()' class='bill leftTownButton btn btn-primary col-sm-2' id='"+town.name+" bill'>Bill</button>";
+		html += "</div><div class='row'>";
 	} else if(town.shop != null){
 		html += "<button class='shop leftTownButton btn btn-primary col-sm-2' id='"+town.name+" Shop'>Shop</button>";
 		html += "</div><div class='row'>";
