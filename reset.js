@@ -135,7 +135,7 @@ var softReset = function() {
 
 }
 
-afterReset = function() {
+var afterReset = function() {
 	var interval = setInterval(function() {
 		if (player.caughtPokemonList.length) {
 			clearInterval(interval);
@@ -156,7 +156,7 @@ afterReset = function() {
 }
 
 
-resetTown = function() {
+var resetTown = function() {
 	var e = $('rect.city:first').clone().insertAfter('#route_25').attr('x', 405).attr('y', 33).attr('id', 'Time Capsule');
 	var townImg = 'http://cdn.bulbagarden.net/upload/thumb/b/ba/Gold_Silver_Ethan_Time_Capsule.png/200px-Gold_Silver_Ethan_Time_Capsule.png';
 
@@ -164,7 +164,7 @@ resetTown = function() {
 }
 setTimeout(resetTown, 1000)
 
-showBill = function() {
+var showBill = function() {
 	// canSave = 0;
 	var townImg = 'http://cdn.bulbagarden.net/upload/thumb/b/ba/Gold_Silver_Ethan_Time_Capsule.png/200px-Gold_Silver_Ethan_Time_Capsule.png';
 	var img = 'http://vignette3.wikia.nocookie.net/pokemon/images/b/ba/Bill.png';
@@ -199,23 +199,22 @@ showBill = function() {
 	$('#oakBody').html(html);
 	$('#oakModal .modal-header h4').html('Bill');
 	$('#oakModal').modal('show');
-	debug.getShards();
 }
 
-showBillConfirm = function() {
+var showBillConfirm = function() {
 	$('#billProceed').html('Sure?').addClass('btn-danger').removeClass('btn-primary').removeAttr('onclick').click(resetAnimation);
 }
 
-resetAnimation = function() {
+var resetAnimation = function() {
 	$('#oakModal').modal('hide');
 	$('<div id=resetFade />').appendTo('body')
 	setTimeout(function() {
 		$('body').addClass('shake');
-	}, 1000);
-	setTimeout(softReset, 6000);
+	}, 2000);
+	setTimeout(softReset, 7000);
 	setTimeout(function() {
 		$('body').removeClass('shake');
-	}, 11000);
+	}, 12000);
 }
 $('<style>').appendTo('head').html(`
 body.shake{
@@ -252,11 +251,6 @@ body.shake #resetFade{
 	100%{opacity:0;background-color:white;}
 }`);
 
-// setTimeout(function() {
-// 	$('<div>').appendTo('body')
-// 		.css({ position: 'fixed', 'font-size': '200%', bottom: 0, right: 0, color: 'red', 'text-align': 'right', padding: '0 10px', 'text-shadow': '0 0 5px lightblue,0 0 5px white,0 0 5px white','z-index': 999999,animation:'none !important'})
-// 		.html('By Dimava<br>In development<br>"reset" github branch<br>Dimava\'s <s>Soft</s> Reset Extension<br>Made by Dimava for Dimava.<br>I dont know will it be added to game or not.');
-// }, 1000);
 debug = {
 	getShards: function() {
 		player.typeShards.forEach((e, i) => {
@@ -267,33 +261,33 @@ debug = {
 	}
 };
 
-recoverResetShards = function(type, amount) {
+var recoverResetShards = function(type, amount) {
 	amount = useResetBlessing(type, amount);
 	if (!amount) return;
 	log('The Time Blessing has granted you access to ' + amount + ' ' + type + ' shards!');
 	player.typeShards[typeToNumber(type)] += amount;
 }
-recoverResetMoney = function(money, message) {
+var recoverResetMoney = function(money, message) {
 	money = useResetBlessing('money', money);
 	if (!money) return;
 	log('With the help of the Time Blessing you have recovered $' + money + '!');
 	player.money += money;
 	player.totalMoney += money;
 }
-recoverResetTokens = function(amount) {
+var recoverResetTokens = function(amount) {
 	amount = useResetBlessing('dungeonTokens', amount);
 	if (!amount) return;
 	log('With the help of the Time Blessing you have recovered ' + amount + ' dungeon token' + (amount == 1 ? '' : 's') + '!');
 	player.dungeonTokens += amount;
 	player.totalDungeonTokens += amount;
 }
-recoverResetQP = function(amount) {
+var recoverResetQP = function(amount) {
 	amount = useResetBlessing('questPoints', amount);
 	if (!amount) return;
 	log('The Time Blessing has granted you access to ' + amount + ' Quest points!');
 	player.questPoints += amount;
 }
-recoverResetShiny = function(egg) {
+var recoverResetShiny = function(egg) {
 	if (!player.resetBlessing) return;
 	var p = player.oldPlayer.caughtPokemonList.filter(function(p) {
 		return p.name == egg.pokemon;
@@ -307,12 +301,12 @@ recoverResetShiny = function(egg) {
 	}
 	return 0;
 }
-sellPurchasedItems = function() {
+var sellPurchasedItems = function() {
 	// hatch eggs #undone
 	['not', 'normal', 'very'].forEach(function(s) {
 		s = player.oldPlayer[s + 'EffectiveTypeBonus'];
 		s.forEach(function(e, i) {
-			player.oldPlayer.typeShards[i] += 250 * e * e;
+			player.oldPlayer.typeShards[i] += 125 * e * (e + 1);
 			s[i] = 0;
 		});
 	});
@@ -332,7 +326,8 @@ sellPurchasedItems = function() {
 	// sell evos for shards #undone
 	// sell egged for QP #undone
 }
-recalculateResetBlessings = function() {
+var recalculateResetBlessings = function() {
+	revertResetBlessings();
 	var b = {
 		money: calculateResetBlessing(player.oldPlayer.money, 1e7),
 		dungeonTokens: calculateResetBlessing(player.oldPlayer.dungeonTokens, 1e6),
@@ -348,42 +343,51 @@ recalculateResetBlessings = function() {
 	// put items too #undone
 	player.resetBlessing = b;
 }
-calculateResetBlessing = function(amount, base) {
-	if (!amount) return -1;
+var revertResetBlessings = function() {
+	['money','dungeonTokens','questPoints'].forEach(function(e){
+		player.oldPlayer[e]+=useResetBlessing(e,1e20);
+	});
+	numberToType.forEach(function(e, i) {
+		player.oldPlayer.typeShards[i] += useResetBlessing(e,1e20);
+	});
+}
+var calculateResetBlessing = function(amount, base) {
+	if (!amount) return null;
 	var b = {
 		level: 1,
-		multi: 1.1,
-		amount: 0,
+		multiBase: 0.9,
+		multiStep: 0.1,
+		amount: amount,
 		base: base
-	}
-	var m = 1;
-	while (amount > m * base) {
-		amount -= m * base;
-		m += 0.1;
+	};
+	while (b.amount > b.base) {
+	//while (b.amount > b.base * (b.multiBase + b.level * b.multiStep)) {
+		b.amount -= b.base;
+	// 	b.amount -= b.base * (b.multiBase + b.level * b.multiStep);
 		b.level++;
 	}
-	b.amount = amount;
 	return b;
 }
-useResetBlessing = function(type, amount) {
-	if (!player.resetBlessing) return;
+var useResetBlessing = function(type, amount) {
+	if (!player.resetBlessing) return 0;
 	if (type.match(/^[A-Z]/)) type = type.toLowerCase();
 	var b = player.resetBlessing[type];
 	if (!b || !b.level) return;
-	var m = b.multi - Math.random() / 5;
-	var a = Math.ceil(amount * m);
+	// var a = Math.ceil(amount * (b.multiBase + 2 * Math.random() * b.level * b.multiStep));
+	var a = Math.ceil(amount * (b.multiBase + b.level * b.multiStep) * (0.9 + Math.random() / 5));
 	if (a < b.amount) {
 		b.amount -= a;
 		return a;
 	}
 	if (b.level == 1) {
 		amount = b.amount;
+		b.amount = b.level = 0;
 		delete player.resetBlessing[type];
 		return amount;
 	}
-	b.amount += b.base;
-	b.multi -= 0.1;
 	b.level--;
+	b.amount += b.base;
+	// b.amount += b.base * (b.multiBase + b.level * b.multiStep);
 	return useResetBlessing(type, amount);
 }
 
