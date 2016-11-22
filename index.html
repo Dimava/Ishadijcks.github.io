@@ -1780,7 +1780,7 @@
 								</tr>
 							<thead>
 							<tbody id="itemBody">
-								<tr v-for="item in items">
+								<tr v-for="item in items" v-if="item.quantity||item.timeLeft">
 									<th>
 										<img :title="item.flavorText" :class="'smallImage tooltipItem'" :src="'images/items/'+item.id+'.png'">
 										{{item.name}}
