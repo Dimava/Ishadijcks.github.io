@@ -292,6 +292,7 @@ recoverResetQP = function(amount) {
 	player.questPoints += amount;
 }
 recoverResetShiny = function(egg) {
+	if (!player.resetBlessing) return;
 	var p = player.oldPlayer.caughtPokemonList.filter(function(p) {
 		return p.name == egg.pokemon;
 	})[0];
