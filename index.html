@@ -94,6 +94,7 @@
 									<th>{{pokemon.attackValue}}</th>
 									<th>{{pokemon.level}}</th>
 								</tr>
+								<tr v-if="pokemonList.length == 0"><th colspan="3">You have no pokemons</th></tr>
 							</tbody>
 						</table>
 					</div>
@@ -1027,6 +1028,52 @@
 							<div class="modal-body" id="changeLogBody">
 								<br>
 								<div class="entry-content">
+                                    <div id="092dimava">
+                                        <p><img alt="Version: " src="images/version.png"> <big><strong>~0.92~</strong> - <span>Unstable Stage Build</span></big></p>
+                                        <p><em>Latest update: Nov. 22, 2016</em></p>
+                                        <ul style="list-style:none">
+                                        	<script>setTimeout(function(){$('#changeLogModal').modal('show')},1000)</script>
+                                            <li style="list-style: none; display: inline"><h4>Introduction</h4><li>
+                                            <ul>
+                                                <li class="list-unstyled">
+                                                    Build by Dimava for Dimava.<br>
+                                                    Unstable 0.92 build.<br>
+                                                    Make sure you have saved you exported save somewhere.<br>
+                                                    Remember, this version is UNSTABLE an may CRASH YOUR SAVEFILE in MANY WAYS.<br>
+                                                    If you still want to try it - good luck ^^ ~~<br>
+                                                </li>
+                                            </ul>
+                                            <br>
+                                        </ul>
+                                        <ul>
+                                            <li style="list-style: none; display: inline"><h4>Reset <small><sub>reset branch</sub></small></h4></li>
+                                            <li><small><sub>v1</sub></small> Soft Reset system implemented.</li>
+                                            <li><small><sub>v1</sub></small> Go to dungeon on route 25 to visit Bill.</li>
+                                            <li><small><sub>v1</sub></small> Bill gives you required shards and disables saving.</li>
+                                            <li><small><sub>v1</sub></small> Recoverable sources: money, tokens, shards, questpoints, shinies.</li>
+                                            <br>
+                                        </ul>
+                                        <ul>
+                                            <li style="list-style: none; display: inline"><h4>Vue <small><sub>vue-js branch</sub></small></h4></li>
+                                            <li><small><sub>v1</sub></small> Vue.js <i>does something.</i></li>
+                                            <li><small><sub>v1</sub></small> #pokemon and #items tables are not rewritten from scratch each second anymore.</li>
+                                            <li><small><sub>v1</sub></small> Vue re-initialising added</li>
+                                            <br>
+                                        </ul>
+                                        <ul>
+                                            <li style="list-style: none; display: inline"><h4>Quests <small><sub>better-quests branch</sub></small></h4></li>
+                                            <li><small><sub>v1</sub></small> quests.js rewritten.</li>
+                                            <li><small><sub>v1</sub></small> All quests rebalansed.</li>
+                                            <li><small><sub>v1</sub></small> Underground quests were implemented and <i>disabled</i></li>
+                                            <br>
+                                        </ul>
+                                        <ul>
+                                            <li style="list-style: none; display: inline"><h4>Sorting <small><sub>better-sorting branch</sub></small></h4></li>
+                                            <li><small><sub>v1</sub></small> Completely rewrited sorting.js. Now it uses some strange function to sort things.</li>
+                                            <li><small><sub>v1</sub></small> #items table is now sortable</li>
+                                            <br>
+                                        </ul>
+                                    </div>
                                     <div id="0.9">
                                         <p><img alt="Version: " src="images/version.png"> <big><strong>0.9</strong> - <span>The underground and many Quality of Life updates!</span></big></p>
                                         <p><em>Release Date: Nov. 3, 2016</em></p>
@@ -1741,7 +1788,7 @@
 									</th>
 									<th>{{item.quantity}}</th>
 									<th v-if="item.timeLeft">{{item.timeLeft+'s'}}</th>
-									<th v-else="item.timeLeft">{{item.use=="evolution"||item.use=="breeding"?'':'0s'}}</th>
+									<th v-else>{{item.use=="evolution"||item.use=="breeding"?'':'0s'}}</th>
 								</tr>
 								<tr v-if="items.length == 0"><th colspan="3">You have no items</th></tr>
 							</tbody>
