@@ -63,17 +63,16 @@
 		<div class="row-fluid">
 			<div class="col-lg-2 col-lg-offset-2 col-sm-4" id="leftColumn">
 				<div class="row">
-					<div id="pokemons">
-						<select id="sortBox" onchange="sortChange()">
-							<option> Sort by... </option>
-							<option value ="id">Pokedex #</option>
-							<option value ="name">Name</option>
-							<option value ="attack">Attack</option>
-							<option value ="level">Level</option>
-							<option value ="time">Order captured</option>
-							<option value ="recent">Most recent</option>
-							<option value ="catchRate">Catch Rate</option>
-							<option value ="shiny">Shiny</option>
+					<div id="pokemons">Sort by 
+						<select id="sortBox" class="sortBox" onchange="sortChange('pokemons')">
+							<option value ="+id">Pokedex #</option>
+							<option value =">name,+id">Name</option>
+							<option value ="~calcAttack,+id">Attack</option>
+							<option value ="~calcLevel,+id">Level</option>
+							<option value ="+timeStamp,+id">Order captured</option>
+							<option value ="-timeStamp,+id">Most recent</option>
+							<option value ="+catchRate,+id">Catch Rate</option>
+							<option value ="-shiny,-timeStamp,+id">Shiny</option>
 						</select>
 						<table id="pokemonTable" class="table table-striped table-bordered table-condensed">
 
@@ -1710,7 +1709,14 @@
 			</div>
 			<div class="col-lg-2 col-lg-offset-3 col-sm-4" id="righterColumn">
 				<div class="row">
-					<div id="items">
+					<div id="items">Sort by 
+						<select class="sortBox" onchange="sortChange('items')">
+							<option value="+id">#</option>
+							<option value=">name,+id">Name</option>
+							<option value="-quantity,+id">Quantity</option>
+							<option value=">type,+id">Type</option>
+							<option value="-timeLeft,id">Time left</option>
+						</select>
 						<table id="itemTable" class="table table-striped table-bordered table-condensed">
 
 							<thead>
