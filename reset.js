@@ -1,9 +1,16 @@
 var softReset = function() {
 	canSave = 1;
+	var saveBackup=save;
 	save = function() {
 		if (!canSave) return;
 		canSave = 0;
-		console.log('Saving is disabled!')
+		alert('Saving is disabled!');
+		if(prompt('Saving was forcefully disabled.\nEnter "enable save" to enable save again.\nI recommend you to export game before resetting.','Saving disabled.').toLowerCase().match(/enable\s*save/g)){
+			save = saveBackup;
+			alert('Saving enabled!');
+		}else{
+			alert('Saving was not enabled!\nSaving is disabled!');
+		}
 	};
 	oldPlayer = player;
 	moveToRoute(1);
