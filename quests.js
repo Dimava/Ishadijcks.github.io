@@ -8,11 +8,19 @@ function isLocationAccessible(name) {
 	if (name.match(/[Rr]oute/))
 		return accessToRoute(name.match(/\d+/)[0]);
 	for (var i = 0; i < townList.length; i++) {
-		if (townList[i].name == name)
-			return accessToTown(townList[i].reqRoutes);
-		if (townList[i].gym)
-			if (townList[i].gym.name == name || townList[i].gym.town == name)
-				return accessToTown(townList[i].reqRoutes) && player.gymBadges.length >= townList[i].gym.badgeReq;
+		var t = townList[i];
+		if (t.name == name)
+			if (t.reqRoutes)
+				return accessToTown(t.reqRoutes);
+		var g = t.gym;
+		if (g) {
+			if (g.name == name || g.town == name)
+				return t.reqRoutes && accessToTown(t.reqRoutes) && player.gymBadges.length >= g.badgeReq;
+			if (!g.name && g.length)
+				for (var j = 0; j < g.length; j++)
+					if (g[j].leaderName == name)
+						return t.reqRoutes && accessToTown(t.reqRoutes) && player.gymBadges.length >= g[j].badgeReq;
+		}
 	}
 	console.warn("Wrong location name!");
 	return null;
