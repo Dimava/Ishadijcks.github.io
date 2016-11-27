@@ -331,6 +331,10 @@ var showGymDefeated = function(first, town){
 
 	$("#gymDefeatedBody").html(html);
 	$("#gymModal").modal('show');
+
+	setTimeout(function() {
+		$("#gymModal button")[0].focus();
+	}, 500);
 }
 
 var alreadyGotBadge = function(badgeName){
